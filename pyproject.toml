@@ -1,0 +1,14 @@
+[project]
+name = "IterSHAP"
+version = "0.0.1"
+description = "Iterative feature selection method using SHAP values"
+readme = "README.md"
+dependencies = [
+
+]
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Frank van Mourik", email = "f.g.vanmourik@student.utwente.nl"},
+]
+keywords = ["SHAP", "Feature Selection", "Explainable AI", "XAI", "Small datasets"]
