@@ -18,7 +18,7 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 
 # SHAP
-from shap import TreeExplainer, LinearExplainer, KernelExplainer
+from shap import TreeExplainer, LinearExplainer, KernelExplainer, Explainer
 
 
 class IterSHAP():
@@ -53,34 +53,16 @@ class IterSHAP():
         self.train_split_size = train_split_size
     
 
-    def get_clf(name):
-        clfs = {
-            'KNN': KNeighborsClassifier(n_neighbors = 20),
-            'RF': RandomForestClassifier(),
-            'RC': RidgeClassifier(),
-            'SVM': svm.SVC(kernel='rbf', C = .1),
-            'DT': tree.DecisionTreeClassifier(max_depth = 4),
-            'CBC': CatBoostClassifier(verbose=0, n_estimators=250, allow_writing_files=False),
-            'XGB': XGBClassifier(max_depth = 3,n_estimators=5),
-        }
-
-        if name not in clfs.keys():
-            raise ValueError(f"{name} is not a valid classifier")
-
-        clf = clfs[name]
-        return clf
-
-
     def get_explainer(self, clf):
         model_type = type(clf)
         if model_type == RandomForestClassifier or model_type == DecisionTreeClassifier or model_type == CatBoostClassifier or model_type == XGBClassifier:
-            return TreeExplainer(clf)
+            return TreeExplainer(clf, self.X_shap)
         elif model_type == svm:
-            return KernelExplainer(clf.predict, self.X_shap)
+            return KernelExplainer(clf, self.X_shap)
         elif model_type == RidgeClassifier:
             return LinearExplainer(clf, self.X_shap)
         else:
-            raise ValueError(f"{model_type.__name__} is not a supported classifier")
+            raise Explainer(clf, self.X_shap)
 
 
     # Returns a pd.series with as indices the feature names and as values the importance
