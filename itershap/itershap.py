@@ -28,7 +28,7 @@ class IterSHAP():
 
     def __init__(
             self,
-            model,
+            model=RandomForestClassifier,
             max_iter=3,
             step_size=0.50,
             train_split_size=0.60
@@ -38,8 +38,8 @@ class IterSHAP():
 
         Parameters
         ----------
-        model: Any
-            Any supported model, used for intermediate and final evaluation of feature selection.
+        model: Any, optional
+            Any supported model, used for intermediate and final evaluation of feature selection. Can be a different model than used for classification/regression afterwards
         max_iter: int, optional
             The maximum number of iteration IterSHAP should run
         step_size: float, optional
@@ -168,7 +168,6 @@ class IterSHAP():
         self.selected_features_log[START_NR_FEATURES] = self.X_train.columns.tolist()
 
         # Go down the pre-defined feature descend path and save the results and selected feature for each step
-        
         LOWER_LIMIT = 0
         for _ in range(self.max_iter, 0, -1):
             nr_features = self.X_train.shape[1]
