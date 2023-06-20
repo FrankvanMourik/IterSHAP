@@ -9,11 +9,10 @@ Run ```pip install -r requirements.txt``` to install the required packages.
 ## Usage
 ```py
 from itershap import IterSHAP
-from sklearn.ensemble import RandomForestClassifier
 
 X, y = get_data() # Replace with data location
 
-fs = IterSHAP(RandomForestClassifier)
+fs = IterSHAP()
 fs.fit(X, y) # Execute IterSHAP on input data
 X_transformed = fs.transform(X) # Only keep the via IterSHAP selected features
 ```
