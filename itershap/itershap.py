@@ -54,6 +54,8 @@ class IterSHAP():
     
 
     def get_explainer(self, clf):
+        """If shap has an optimised Explainer type for the classifier provided, return that Explainer, otherwise return the default
+        """
         model_type = type(clf)
         if model_type == RandomForestClassifier or model_type == DecisionTreeClassifier or model_type == CatBoostClassifier or model_type == XGBClassifier:
             return TreeExplainer(clf, self.X_shap)
@@ -65,8 +67,10 @@ class IterSHAP():
             raise Explainer(clf, self.X_shap)
 
 
-    # Returns a pd.series with as indices the feature names and as values the importance
+    
     def get_shap_important_features(self, clf):
+        """Returns a pd.series with as indices the feature names and as values the importance
+        """
         explainer = self.get_explainer(clf)
         shap_test = explainer(self.X_shap)
         shap_df = pd.DataFrame(shap_test.data, columns=shap_test.feature_names, index=self.X_shap.index)
@@ -80,7 +84,8 @@ class IterSHAP():
 
     
     def select_features(self, nr_features, LOWER_LIMIT):
-        # Initialize, train, and evaluate a classifier
+        """Initialize, train, and evaluate a classifier
+        """
         clf = self.model()
         clf.fit(self.X_train, self.y_train)
         y_pred_val = clf.predict(self.X_val)
@@ -107,7 +112,8 @@ class IterSHAP():
     
     
     def get_limits(self, CURR_BEST_NR_FEATURES, START_NR_FEATURES):
-        # Set upper limit to value above best result so far
+        """Set upper limit to value above best result so far
+        """
         if START_NR_FEATURES == CURR_BEST_NR_FEATURES:
             # If the best accuracy was achieved at the highest nr. of features, set the upper limit to the max. nr. of features included after filtering
             UPPER_LIMIT = CURR_BEST_NR_FEATURES
@@ -135,42 +141,54 @@ class IterSHAP():
 
 
     def fit(self, X, y):
+        """Execute the IterSHAP algorithm and set the best subset of features as property of the class
+        """
         X = pd.DataFrame(X)
+
         # Split the training split. The remaining data is split 50/50 over validation and shap data
         self.X_train, self.X_val, self.y_train, self.y_val = train_test_split(X, y, train_size=self.train_split_size)
         self.X_val, self.X_shap, self.y_val, self.y_shap = train_test_split(self.X_val, self.y_val, train_size=0.50)
         self.results_log = {}
 
+        # Keep a copy of the original data to restore after iterations
         self.X_train_origin = self.X_train
         self.X_val_origin = self.X_val
         self.X_shap_origin = self.X_shap
 
+        # Initiate the log with the a list of all features
         START_NR_FEATURES = self.X_train_origin.shape[1]
         self.selected_features_log = {}
         self.selected_features_log[START_NR_FEATURES] = self.X_train.columns.tolist()
 
-        # Go down the pre-defined feature descend path and save the results and selected feature for each step
+        # The initial lower limit of the search space
         LOWER_LIMIT = 0
+
+        # Go down in nr of features with the defiend step_size .
+        # At each (sub-)iteration selected the best feature subset
         for _ in range(self.max_iter, 0, -1):
+            # The current number of feature in X 
             nr_features = self.X_train.shape[1]
+
+            # Go down the search space until lower limit is reached
             while nr_features > 0:
                 self, nr_features = self.select_features(nr_features, LOWER_LIMIT)
 
-            # Select option with highest accuracy
+            # Select subset with highest model accuracy
             CURR_BEST_NR_FEATURES = sorted(self.results_log, key=self.results_log.get, reverse=True)[0]
 
             # Order the results_log and selection_features_log
             self.selected_features_log = dict(sorted(self.selected_features_log.items()))
             self.results_log = dict(sorted(self.results_log.items()))
 
-            # Determine the upper and lower limit of the secondary search space
+            # Determine the upper and lower limit for the next search space
             self, UPPER_LIMIT, LOWER_LIMIT = self.get_limits(CURR_BEST_NR_FEATURES, START_NR_FEATURES)
 
-            # Break when search space is too small
+            # Break when search space is exhausted
             if UPPER_LIMIT - LOWER_LIMIT <= 2:
                 break
             
-            # Reinitialize X_train, X_val, and X_shap to upper limit features from the selected features log
+            # Reinitialize X_train, X_val, and X_shap to upper limit features from the selected features log.
+            # This is the start data for the next iteration
             self.X_train = self.X_train_origin[self.selected_features_log[UPPER_LIMIT]]
             self.X_val = self.X_val_origin[self.selected_features_log[UPPER_LIMIT]]
             self.X_shap = self.X_shap_origin[self.selected_features_log[UPPER_LIMIT]]
@@ -179,13 +197,14 @@ class IterSHAP():
         BEST_NR_FEATURES = sorted(self.results_log, key=self.results_log.get, reverse=True)[0]
         BEST_SELECTED_FEATURES = self.selected_features_log[BEST_NR_FEATURES]
         
-        # Return the best performing nr. of features and the corresponding accuracy
+        # Set the best performing subset at property of the class
         self.best_subset = BEST_SELECTED_FEATURES
         return self
     
 
     def transform(self, X):
-        # If a subset has been calculated by the fit method, return that subset, otherwise, return the entire dataset.
+        """Transform input X to only include the best features, calculated by IterSHAP. If IterSHAP has not been run yet, return X.
+        """
         if self.best_subset:
             return X[self.best_subset]
         return X
