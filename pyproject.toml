@@ -12,3 +12,7 @@ authors = [
     {name = "Frank van Mourik", email = "f.g.vanmourik@student.utwente.nl"},
 ]
 keywords = ["SHAP", "Feature Selection", "Explainable AI", "XAI", "Small datasets"]
+
+[project.urls]
+"Homepage" = "https://github.com/FrankvanMourik/IterSHAP"
+"Bug Tracker" = "https://github.com/FrankvanMourik/IterSHAP/issues"
