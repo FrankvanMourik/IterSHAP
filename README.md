@@ -1,10 +1,8 @@
 # IterSHAP: Iterative feature selection using SHAP values
-Version 0.0.1. Date: June 19th, 2023
-
 Author: Frank van Mourik, University of Twente
 
 ## Installation
-Run ```pip install -r requirements.txt``` to install the required packages.
+Install via [pip](https://pypi.org/project/itershap/) using: ```pip install itershap```.
 
 ## Usage
 ```py
