@@ -10,8 +10,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
 
 from catboost import CatBoostClassifier
@@ -28,10 +26,10 @@ class IterSHAP():
 
     def __init__(
             self,
-            model=RandomForestClassifier,
-            max_iter=3,
-            step_size=0.50,
-            train_split_size=0.60
+            model:any = RandomForestClassifier(),
+            max_iter:int = 3,
+            step_size:float = 0.50,
+            train_split_size:float = 0.60
     ):
         """
         Create an itershap object
