@@ -204,6 +204,7 @@ class IterSHAP():
     def transform(self, X):
         """Transform input X to only include the best features, calculated by IterSHAP. If IterSHAP has not been run yet, return X.
         """
+        X = pd.DataFrame(X)
         if self.best_subset:
             return X[self.best_subset]
         return X
