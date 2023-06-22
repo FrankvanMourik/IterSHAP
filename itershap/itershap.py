@@ -205,5 +205,5 @@ class IterSHAP():
         """Transform input X to only include the best features, calculated by IterSHAP. If IterSHAP has not been run yet, return X.
         """
         if self.best_subset:
-            return X.iloc[self.best_subset]
+            return X[self.best_subset]
         return X
