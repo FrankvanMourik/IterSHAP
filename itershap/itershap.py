@@ -66,7 +66,6 @@ class IterSHAP():
         else:
             raise Explainer(clf, self.X_shap)
 
-
     
     def get_shap_important_features(self, clf):
         """Returns a pd.series with as indices the feature names and as values the importance
@@ -206,6 +205,5 @@ class IterSHAP():
         """Transform input X to only include the best features, calculated by IterSHAP. If IterSHAP has not been run yet, return X.
         """
         if self.best_subset:
-            return X[self.best_subset]
+            return X.iloc[self.best_subset]
         return X
-        
