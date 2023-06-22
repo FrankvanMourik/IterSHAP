@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 # Data & training
-from sklearn import svm
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.metrics import accuracy_score
@@ -57,7 +57,7 @@ class IterSHAP():
         model_type = type(clf)
         if model_type == RandomForestClassifier or model_type == DecisionTreeClassifier or model_type == CatBoostClassifier or model_type == XGBClassifier:
             return TreeExplainer(clf, self.X_shap)
-        elif model_type == svm:
+        elif model_type == SVC:
             return KernelExplainer(clf, self.X_shap)
         elif model_type == RidgeClassifier:
             return LinearExplainer(clf, self.X_shap)
