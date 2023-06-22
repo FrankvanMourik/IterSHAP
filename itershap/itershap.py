@@ -85,7 +85,7 @@ class IterSHAP():
     def select_features(self, nr_features, LOWER_LIMIT):
         """Initialize, train, and evaluate a classifier
         """
-        clf = self.model()
+        clf = self.model
         clf.fit(self.X_train, self.y_train)
         y_pred_val = clf.predict(self.X_val)
         accuracy = accuracy_score(self.y_val, y_pred_val)
