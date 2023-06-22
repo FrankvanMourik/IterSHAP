@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "IterSHAP"
-version = "0.0.3"
+version = "0.0.12"
 description = "Iterative feature selection method using SHAP values"
 readme = "README.md"
 license = "MIT"
@@ -13,7 +13,14 @@ repository = "https://github.com/FrankvanMourik/IterSHAP"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
-numpy = "^1.25.0"
-pandas = "^2.0.2"
-scikit-learn = "^1.2.2"
-shap = "^0.40.0"
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+shap = "*"
+xgboost = "*"
+
+[[tool.poetry.source]]
+name = "IterSHAP"
+url = "https://test.pypi.org/simple"
+priority = "primary"
+
