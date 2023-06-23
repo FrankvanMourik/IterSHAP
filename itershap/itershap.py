@@ -16,7 +16,7 @@ from catboost import CatBoostClassifier
 from xgboost import XGBClassifier
 
 # SHAP
-from shap import TreeExplainer, LinearExplainer, KernelExplainer, Explainer
+from shap import TreeExplainer, GradientExplainer, DeepExplainer, KernelExplainer, SamplingExplainer, PartitionExplainer, LinearExplainer, PermutationExplainer, AdditiveExplainer, Explainer
 
 
 class IterSHAP():
@@ -54,15 +54,27 @@ class IterSHAP():
     def get_explainer(self, clf):
         """If shap has an optimised Explainer type for the classifier provided, return that Explainer, otherwise return the default
         """
-        model_type = type(clf)
-        if model_type == RandomForestClassifier or model_type == DecisionTreeClassifier or model_type == CatBoostClassifier or model_type == XGBClassifier:
+        if TreeExplainer.supports_model_with_masker(clf, None):
             return TreeExplainer(clf, self.X_shap)
-        elif model_type == SVC:
+        elif GradientExplainer.supports_model_with_masker(clf, None):
+            return GradientExplainer(clf, self.X_shap)
+        elif DeepExplainer.supports_model_with_masker(clf, None):
+            return DeepExplainer(clf, self.X_shap)
+        elif KernelExplainer.supports_model_with_masker(clf, None):
             return KernelExplainer(clf, self.X_shap)
-        elif model_type == RidgeClassifier:
-            return LinearExplainer(clf, self.X_shap)
-        else:
-            raise Explainer(clf, self.X_shap)
+        elif SamplingExplainer.supports_model_with_masker(clf, None):
+            return SamplingExplainer(clf, self.X_shap)
+        elif PartitionExplainer.supports_model_with_masker(clf, None):
+            return PartitionExplainer(clf, None)
+        elif LinearExplainer.supports_model_with_masker(clf, None):
+            return PartitionExplainer(clf, None)
+        elif PermutationExplainer.supports_model_with_masker(clf, None):
+            return PermutationExplainer(clf, None)
+        elif AdditiveExplainer.supports_model_with_masker(clf, None):
+            return AdditiveExplainer(clf, None)
+        elif Explainer.supports_model_with_masker(clf, None):
+            return Explainer(clf, None)
+        raise ValueError(f"{clf} is not yet supported by any Explainer model")
 
     
     def get_shap_important_features(self, clf):
