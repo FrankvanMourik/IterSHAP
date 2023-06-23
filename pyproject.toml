@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "IterSHAP"
-version = "0.0.12"
+version = "0.1.0"
 description = "Iterative feature selection method using SHAP values"
 readme = "README.md"
 license = "MIT"
@@ -21,6 +21,6 @@ xgboost = "*"
 
 [[tool.poetry.source]]
 name = "IterSHAP"
-url = "https://test.pypi.org/simple"
+url = "https://pypi.org/simple"
 priority = "primary"
 
