@@ -5,13 +5,11 @@ import numpy as np
 import pandas as pd
 
 # Data & training
-from sklearn import svm
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import RidgeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import tree
 from sklearn.tree import DecisionTreeClassifier
 
 from catboost import CatBoostClassifier
@@ -28,10 +26,10 @@ class IterSHAP():
 
     def __init__(
             self,
-            model=RandomForestClassifier,
-            max_iter=3,
-            step_size=0.50,
-            train_split_size=0.60
+            model:any = RandomForestClassifier(),
+            max_iter:int = 3,
+            step_size:float = 0.50,
+            train_split_size:float = 0.60
     ):
         """
         Create an itershap object
@@ -59,7 +57,7 @@ class IterSHAP():
         model_type = type(clf)
         if model_type == RandomForestClassifier or model_type == DecisionTreeClassifier or model_type == CatBoostClassifier or model_type == XGBClassifier:
             return TreeExplainer(clf, self.X_shap)
-        elif model_type == svm:
+        elif model_type == SVC:
             return KernelExplainer(clf, self.X_shap)
         elif model_type == RidgeClassifier:
             return LinearExplainer(clf, self.X_shap)
@@ -85,7 +83,7 @@ class IterSHAP():
     def select_features(self, nr_features, LOWER_LIMIT):
         """Initialize, train, and evaluate a classifier
         """
-        clf = self.model()
+        clf = self.model
         clf.fit(self.X_train, self.y_train)
         y_pred_val = clf.predict(self.X_val)
         accuracy = accuracy_score(self.y_val, y_pred_val)

@@ -1,14 +1,26 @@
-[project]
+[tool.poetry]
 name = "IterSHAP"
-version = "0.0.1"
+version = "0.1.0"
 description = "Iterative feature selection method using SHAP values"
 readme = "README.md"
-dependencies = [
-
-]
-requires-python = ">=3.10"
-license = {file = "LICENSE"}
+license = "MIT"
 authors = [
-    {name = "Frank van Mourik", email = "f.g.vanmourik@student.utwente.nl"},
+    "Frank van Mourik <f.g.vanmourik@student.utwente.nl>",
 ]
 keywords = ["SHAP", "Feature Selection", "Explainable AI", "XAI", "Small datasets"]
+homepage = "https://github.com/FrankvanMourik/IterSHAP"
+repository = "https://github.com/FrankvanMourik/IterSHAP"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.11"
+numpy = "*"
+pandas = "*"
+scikit-learn = "*"
+shap = "*"
+xgboost = "*"
+
+[[tool.poetry.source]]
+name = "IterSHAP"
+url = "https://pypi.org/simple"
+priority = "primary"
+
