@@ -69,7 +69,7 @@ class IterSHAP():
         """Returns a pd.series with as indices the feature names and as values the importance
         """
         explainer = self.get_explainer(clf)
-        shap_test = explainer(self.X_shap)
+        shap_test = explainer(self.X_shap, check_additivity=False)
         shap_df = pd.DataFrame(shap_test.data, columns=shap_test.feature_names, index=self.X_shap.index)
         sorted_importances = shap_df.apply(np.abs).mean().sort_values(ascending=False)
 
