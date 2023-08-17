@@ -13,7 +13,7 @@ addpath('/MATLAB Drive/data/data_preprocessed_matlab')
 
 %% set parameters
 frameNum = 60;
-nr_ext_feat = 14;
+nr_ext_feat = 12;
 
 %%
 
@@ -83,27 +83,27 @@ for participant = 1:Participant
 
                 % Calculate Mean
                 meanValue = mean(abs(fftSignal).^2);
-                output(8, channel, k) = meanValue;
+                output(7, channel, k) = meanValue;
             
                 % Calculate Median
                 medianValue = median(abs(fftSignal).^2);
-                output(9, channel, k) = medianValue;
+                output(8, channel, k) = medianValue;
             
                 % Calculate Standard Deviation
                 stdDeviation = std(abs(fftSignal).^2);
-                output(10, channel, k) = stdDeviation;
+                output(9, channel, k) = stdDeviation;
             
                 % Calculate Interquartile Range
                 interquartileRange = iqr(abs(fftSignal).^2);
-                output(11, channel, k) = interquartileRange;
+                output(10, channel, k) = interquartileRange;
             
                 % Calculate Maximum Value
                 maxValue = max(abs(fftSignal).^2);
-                output(12, channel, k) = maxValue;
+                output(11, channel, k) = maxValue;
             
                 % Calculate Minimum Value
                 minValue = min(abs(fftSignal).^2);
-                output(13, channel, k) = minValue;
+                output(12, channel, k) = minValue;
             end
 
 
@@ -112,12 +112,12 @@ for participant = 1:Participant
             
             % Append the features
 
-            % Save as 60 samples (1 per second) with 32x14 features
+            % Save as 60 samples (1 per second) with 32x12 features
 
             
         end
 
-        % Reshape data to be 60 samples by 32*14 features
+        % Reshape data to be 60 samples by 32*12 features
         output2d = reshape(output,[Channel*nr_ext_feat,frameNum]);
         for k = 1:Channel*nr_ext_feat
             fprintf(fid, '%g,',output2d(k,:));
