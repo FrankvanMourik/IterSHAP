@@ -83,11 +83,16 @@ class IterSHAP():
     def select_features(self, nr_features, LOWER_LIMIT):
         """Initialize, train, and evaluate a classifier
         """
+        CONFIG_RESULTS_SKIPPED = False
         clf = self.model
         clf.fit(self.X_train, self.y_train)
         y_pred_val = clf.predict(self.X_val)
         accuracy = accuracy_score(self.y_val, y_pred_val)
-        self.results_log[nr_features] = accuracy
+        if nr_features in self.results_log and accuracy <= self.results_log[nr_features]:
+            # The results log is not overwritten, as the accuracy is lower
+            CONFIG_RESULTS_SKIPPED = True
+        else:
+            self.results_log[nr_features] = accuracy
 
         if nr_features <= LOWER_LIMIT+1:
             return self, 0
@@ -98,7 +103,9 @@ class IterSHAP():
         # Select features for next iteration
         selected_features = self.get_shap_important_features(clf)
         selected_features = selected_features.index.tolist()[:nr_features]
-        self.selected_features_log[nr_features] = selected_features
+        if not CONFIG_RESULTS_SKIPPED:
+            # Only overwrite the subset if the accuracy was higher, or when this is the first time this configuration was ran
+            self.selected_features_log[nr_features] = selected_features
 
         # Only keep the most-relevant features:
         self.X_train = self.X_train[selected_features]
