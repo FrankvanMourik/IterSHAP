@@ -80,7 +80,7 @@ class IterSHAP():
         return sorted_importances
 
     
-    def select_features(self, nr_features, LOWER_LIMIT):
+    def select_features(self, nr_features):
         """Initialize, train, and evaluate a classifier
         """
         CONFIG_RESULTS_SKIPPED = False
@@ -94,11 +94,11 @@ class IterSHAP():
         else:
             self.results_log[nr_features] = accuracy
 
-        if nr_features <= LOWER_LIMIT+1:
+        if nr_features <= self.LOWER_LIMIT+1:
             return self, 0
 
         # Number of features to select
-        nr_features = round((nr_features + LOWER_LIMIT)*self.step_size)
+        nr_features = round((nr_features + self.LOWER_LIMIT)*self.step_size)
 
         # Select features for next iteration
         selected_features = self.get_shap_important_features(clf)
@@ -141,7 +141,9 @@ class IterSHAP():
             CONFIG_LIST = list(self.selected_features_log.keys())
             BEST_INDEX = CONFIG_LIST.index(CURR_BEST_NR_FEATURES)
             LOWER_LIMIT = CONFIG_LIST[BEST_INDEX-1]
-        return self, UPPER_LIMIT, LOWER_LIMIT
+        self.UPPER_LIMIT = UPPER_LIMIT
+        self.LOWER_LIMIT = LOWER_LIMIT
+        return self
 
 
     def fit(self, X, y):
@@ -165,7 +167,8 @@ class IterSHAP():
         self.selected_features_log[START_NR_FEATURES] = self.X_train.columns.tolist()
 
         # The initial lower limit of the search space
-        LOWER_LIMIT = 0
+        self.UPPER_LIMIT = START_NR_FEATURES
+        self.LOWER_LIMIT = 0
 
         # Go down in nr of features with the defiend step_size .
         # At each (sub-)iteration selected the best feature subset
@@ -175,7 +178,7 @@ class IterSHAP():
 
             # Go down the search space until lower limit is reached
             while nr_features > 0:
-                self, nr_features = self.select_features(nr_features, LOWER_LIMIT)
+                self, nr_features = self.select_features(nr_features)
 
             # Select subset with highest model accuracy
             CURR_BEST_NR_FEATURES = sorted(self.results_log, key=self.results_log.get, reverse=True)[0]
@@ -185,17 +188,17 @@ class IterSHAP():
             self.results_log = dict(sorted(self.results_log.items()))
 
             # Determine the upper and lower limit for the next search space
-            self, UPPER_LIMIT, LOWER_LIMIT = self.get_limits(CURR_BEST_NR_FEATURES, START_NR_FEATURES)
+            self = self.get_limits(CURR_BEST_NR_FEATURES, START_NR_FEATURES)
 
             # Break when search space is exhausted
-            if UPPER_LIMIT - LOWER_LIMIT <= 2:
+            if self.UPPER_LIMIT - self.LOWER_LIMIT <= 2:
                 break
             
             # Reinitialize X_train, X_val, and X_shap to upper limit features from the selected features log.
             # This is the start data for the next iteration
-            self.X_train = self.X_train_origin[self.selected_features_log[UPPER_LIMIT]]
-            self.X_val = self.X_val_origin[self.selected_features_log[UPPER_LIMIT]]
-            self.X_shap = self.X_shap_origin[self.selected_features_log[UPPER_LIMIT]]
+            self.X_train = self.X_train_origin[self.selected_features_log[self.UPPER_LIMIT]]
+            self.X_val = self.X_val_origin[self.selected_features_log[self.UPPER_LIMIT]]
+            self.X_shap = self.X_shap_origin[self.selected_features_log[self.UPPER_LIMIT]]
             
         # Select best performance from the logs.
         BEST_NR_FEATURES = sorted(self.results_log, key=self.results_log.get, reverse=True)[0]
