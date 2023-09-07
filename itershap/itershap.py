@@ -96,9 +96,6 @@ class IterSHAP():
 
         if nr_features <= LOWER_LIMIT+1:
             return self, 0
-        
-        # Temporary store the nr. of features of the previous iteration
-        old_nr_features = nr_features
 
         # Number of features to select
         nr_features = round((nr_features + LOWER_LIMIT)*self.step_size)
